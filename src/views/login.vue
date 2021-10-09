@@ -3,7 +3,6 @@
     <span class="title"> 登&nbsp;&nbsp;&nbsp;&nbsp;录 </span>
     <div class="form_box">
       <el-form
-        :label-position="labelPosition"
         label-width="80px"
         :model="param"
         class="form_table"
@@ -12,9 +11,9 @@
           <el-input v-model="param.username" style="width:85%;float:left" placeholder="这里是用户名哦"></el-input>
         </el-form-item>
         <el-form-item label="密码:">
-          <el-input v-model="param.password" style="width:85%;float:left"  placeholder="嘘...这里是密码"></el-input>
+          <el-input type="password" v-model="param.password" style="width:85%;float:left"  placeholder="嘘...这里是密码"></el-input>
         </el-form-item>
-        <el-button type="primary" round  >GO!</el-button>
+        <el-button type="primary" round  @click="login()" >GO!</el-button>
       </el-form>
     </div>
   </div>
@@ -32,6 +31,25 @@ export default {
         }
     };
   },
+  methods:{
+    login(){
+      let req = {
+        "userName" : this.param.username,
+        "password" : this.param.password
+      }
+      this.$axios.post('/teacher/system/login',
+      req).then(res => {
+             if(res.data.rspCode === '0000'){
+               sessionStorage.setItem("token",res.data.rspData.token)
+               sessionStorage.setItem("teacherInfo",JSON.stringify(res.data.rspData.teacherInfo))
+               this.$router.push("welcome");
+              this.$message.success("登录成功!");
+            }else{
+                this.$message.warning("登录失败！");
+            }
+        })
+    }
+  }
 };
 </script>
 
